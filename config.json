@@ -1,0 +1,6 @@
+{
+    "error_threshold": 0.1,
+    "response_time_threshold": 0.5,
+    "check_interval": 10,
+    "loop_limit": 10000
+}

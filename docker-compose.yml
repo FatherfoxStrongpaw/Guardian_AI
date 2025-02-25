@@ -1,0 +1,46 @@
+services:
+  rsi-agent:
+    image: python:3.12-slim
+    container_name: rsi-agent
+    build: .
+    volumes:
+      - ./:/app
+      - agent-logs:/var/log/rsi
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=rsi_agent
+      - MYSQL_PASSWORD=securepassword123
+      - MYSQL_DATABASE=sandbox_logs
+    networks:
+      - rsi-internal
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 100M
+
+  db:
+    image: mysql:8.0
+    container_name: rsi-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: sandbox_logs
+      MYSQL_USER: rsi_agent
+      MYSQL_PASSWORD: securepassword123
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - rsi-internal
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:
+  agent-logs:
+
+networks:
+  rsi-internal:
+    driver: bridge
+    internal: true

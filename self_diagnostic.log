@@ -1,0 +1,20 @@
+[2025-03-13 07:56:49,459] INFO: Ollama Agent initialized
+[2025-03-13 08:00:52,940] INFO: Manifest loaded successfully.
+[2025-03-13 08:00:52,946] INFO: Manifest saved successfully.
+[2025-03-13 08:11:37,156] INFO: Received keyboard interrupt
+[2025-03-14 00:46:24,841] INFO: Memory file not found. Starting with empty memory.
+[2025-03-14 00:46:24,863] INFO: HITL Interface initialized
+[2025-03-14 00:46:24,888] INFO: Configuration saved successfully.
+[2025-03-14 00:48:04,765] INFO: Memory file not found. Starting with empty memory.
+[2025-03-14 00:48:49,514] INFO: Memory file not found. Starting with empty memory.
+[2025-03-14 00:51:37,897] INFO: Memory file not found. Starting with empty memory.
+[2025-03-14 00:52:42,665] INFO: Memory file not found. Starting with empty memory.
+[2025-03-14 00:52:42,685] INFO: Initialized SandboxExecutor with timeout=10, max_memory=512m
+[2025-03-14 00:52:42,685] INFO: HITL Interface initialized
+[2025-03-14 00:52:42,688] INFO: Configuration saved successfully.
+[2025-03-14 00:52:42,688] INFO: Initialized Ollama agent with model: llama2
+[2025-03-14 00:56:12,239] INFO: Memory file not found. Starting with empty memory.
+[2025-03-14 00:56:12,250] INFO: Initialized SandboxExecutor with timeout=10, max_memory=512m
+[2025-03-14 00:56:12,250] INFO: HITL Interface initialized
+[2025-03-14 00:56:12,250] INFO: Configuration loaded/reloaded successfully.
+[2025-03-14 00:56:12,250] INFO: Initialized Ollama agent with model: llama2

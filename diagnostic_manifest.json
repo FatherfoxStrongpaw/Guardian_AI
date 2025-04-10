@@ -1,0 +1,13 @@
+{
+    "critical_files": {
+        "sandbox_excecuter.py": null,
+        "rsi_module.py": "0ed82be306e72082a329a524b23fb76a065b3f14ec9ba46c5035e842e2a9f0a1",
+        "perpetual_agent.py": null,
+        "hitl_interface.py": "39966da9e811daae8797fa0b7a2ce4faea1903bf68a1b2bc25fde815610757cc",
+        "ollama_agent.py": "6a1be9fd58d5a4bf01ccc9a8a65bb43944682d7c3bc2742dbd07322c80611b36",
+        "self_diagnostic.py": "45b0d830e3a09277f2a4bb328bfa02acfc36545ac3c7a6e19b90d6874ae27a15"
+    },
+    "last_check": 1741878052.94043,
+    "check_interval": 3600,
+    "alert_threshold": 3
+}

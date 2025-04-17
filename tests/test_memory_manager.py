@@ -7,9 +7,11 @@ from memory_manager import MemoryManager
 
 class TestMemoryManager(unittest.TestCase):
     def setUp(self):
+        self.temp_dir = tempfile.mkdtemp()
+        self.db_path = os.path.join(self.temp_dir, "test_memory.db")
         self.config = {
             "memory": {
-                "path": "test_memory.db",  # Changed from dict to string path
+                "path": self.db_path,
                 "type": "sqlite",
                 "retention_days": 7
             }
@@ -17,9 +19,11 @@ class TestMemoryManager(unittest.TestCase):
         self.memory_manager = MemoryManager(self.config)
 
     def tearDown(self):
+        self.memory_manager.cleanup()
         if os.path.exists(self.db_path):
             os.remove(self.db_path)
-        os.rmdir(self.temp_dir)
+        if os.path.exists(self.temp_dir):
+            os.rmdir(self.temp_dir)
 
     def test_record_management(self):
         """Test basic record operations"""
@@ -103,7 +107,7 @@ class TestMemoryManager(unittest.TestCase):
         # Restore from backup
         new_db_path = os.path.join(self.temp_dir, "restored.db")
         self.memory_manager.restore_from_backup(backup_path, new_db_path)
-        
+
         # Verify restored data
         restored_manager = MemoryManager({"memory": {"path": new_db_path}})
         restored_records = restored_manager.query_records({"type": "test"})
@@ -125,6 +129,33 @@ class TestMemoryManager(unittest.TestCase):
             mock_connect.side_effect = sqlite3.Error("Test error")
             with self.assertRaises(Exception):
                 MemoryManager(self.config)
+
+    def test_circuit_breaker(self):
+        """Test circuit breaker functionality"""
+        # Test that circuit breaker is initialized
+        self.assertIsNotNone(self.memory_manager.db_circuit_breaker)
+
+        # Test that circuit breaker is used for store operations
+        with patch.object(self.memory_manager.db_circuit_breaker, 'execute') as mock_execute:
+            mock_execute.return_value = True
+            self.memory_manager.store("test_key", "test_value")
+            mock_execute.assert_called_once()
+
+        # Test that circuit breaker is used for retrieve operations
+        with patch.object(self.memory_manager.db_circuit_breaker, 'execute') as mock_execute:
+            mock_execute.return_value = '{"value": "test_value"}'
+            self.memory_manager.retrieve("test_key")
+            mock_execute.assert_called_once()
+
+        # Test fallback behavior
+        with patch.object(self.memory_manager, '_db_operation_fallback') as mock_fallback:
+            mock_fallback.return_value = None
+            # Force circuit breaker to use fallback
+            self.memory_manager.db_circuit_breaker.failure_count = 999
+            self.memory_manager.db_circuit_breaker.state = 2  # OPEN state
+            result = self.memory_manager.retrieve("test_key")
+            self.assertIsNone(result)
+            mock_fallback.assert_called_once()
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,8 +1,10 @@
 import unittest
 import docker
+import time
 from sandbox_executor import SandboxExecutor
 from rsi_module import RSIModule
 from perpetual_llm import PerpetualLLM
+from resilience.circuit_breaker import CircuitBreaker, CircuitState
 
 class TestSecurityMeasures(unittest.TestCase):
     def setUp(self):
@@ -15,7 +17,7 @@ class TestSecurityMeasures(unittest.TestCase):
                 }
             }
         })
-        
+
     def test_sandbox_isolation(self):
         """Test that sandbox properly isolates potentially dangerous operations"""
         dangerous_code = """
@@ -58,7 +60,7 @@ class TestSecurityMeasures(unittest.TestCase):
 class TestRSIModuleSecurity(unittest.TestCase):
     def setUp(self):
         self.rsi = RSIModule()
-        
+
     def test_directive_validation(self):
         """Test that directives are properly validated"""
         malicious_directive = {
@@ -74,10 +76,66 @@ class TestRSIModuleSecurity(unittest.TestCase):
         self.rsi.execute_task({'code': 'config["security"]["enabled"] = False'})
         self.assertEqual(self.rsi.config, original_config)
 
+class TestCircuitBreaker(unittest.TestCase):
+    def setUp(self):
+        self.circuit_breaker = CircuitBreaker(
+            failure_threshold=2,
+            recovery_timeout=1,  # Short timeout for testing
+            fallback=lambda: "fallback_response"
+        )
+
+    def test_circuit_breaker_open_after_failures(self):
+        """Test that circuit breaker opens after multiple failures"""
+        # Define a function that always fails
+        def failing_function():
+            raise Exception("Simulated failure")
+
+        # First failure
+        result = self.circuit_breaker.execute(failing_function)
+        self.assertEqual(result, "fallback_response")
+        self.assertEqual(self.circuit_breaker.state, CircuitState.CLOSED)
+        self.assertEqual(self.circuit_breaker.failure_count, 1)
+
+        # Second failure should open the circuit
+        result = self.circuit_breaker.execute(failing_function)
+        self.assertEqual(result, "fallback_response")
+        self.assertEqual(self.circuit_breaker.state, CircuitState.OPEN)
+
+    def test_circuit_breaker_half_open_after_timeout(self):
+        """Test that circuit breaker transitions to half-open after timeout"""
+        # Define a function that always fails
+        def failing_function():
+            raise Exception("Simulated failure")
+
+        # Force circuit to open
+        self.circuit_breaker.failure_count = self.circuit_breaker.failure_threshold
+        self.circuit_breaker.state = CircuitState.OPEN
+        self.circuit_breaker.last_failure_time = time.time() - 2  # Past the recovery timeout
+
+        # Next execution should try (half-open) but then fail and go back to open
+        result = self.circuit_breaker.execute(failing_function)
+        self.assertEqual(result, "fallback_response")
+        self.assertEqual(self.circuit_breaker.state, CircuitState.OPEN)
+
+    def test_circuit_breaker_closes_after_success(self):
+        """Test that circuit breaker closes after successful execution in half-open state"""
+        # Define a function that succeeds
+        def successful_function():
+            return "success"
+
+        # Force circuit to half-open
+        self.circuit_breaker.state = CircuitState.HALF_OPEN
+
+        # Successful execution should close the circuit
+        result = self.circuit_breaker.execute(successful_function)
+        self.assertEqual(result, "success")
+        self.assertEqual(self.circuit_breaker.state, CircuitState.CLOSED)
+        self.assertEqual(self.circuit_breaker.failure_count, 0)
+
 class TestPerpetualLLMSecurity(unittest.TestCase):
     def setUp(self):
         self.llm = PerpetualLLM(config={}, memory_manager=None, model="llama2")
-        
+
     def test_variant_isolation(self):
         """Test that dangerous variants are properly contained"""
         dangerous = self.llm.simulate_variants(

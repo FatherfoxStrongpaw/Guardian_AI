@@ -1,7 +1,5 @@
-import json
 import time
 import logging
-import threading
 from consolidated_code_analysis import ConsolidatedCodeAnalysis
 from system_task_manager import SystemTaskManager
 
@@ -22,7 +20,21 @@ class HITLInterface:
     async def alert_degraded_state(self, health_status):
         """Alert about degraded system state"""
         logger.warning(f"System in degraded state: {health_status}")
-        # Add any notification logic here
+
+        # In a real implementation, this would send notifications
+        # via email, SMS, or other channels asynchronously
+
+        # Simulate async operation
+        import asyncio
+        await asyncio.sleep(0.1)
+
+        # Log the alert to a file for tracking
+        try:
+            with open("alerts.log", "a") as f:
+                f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] ALERT: System in degraded state: {health_status}\n")
+        except Exception as e:
+            logger.error(f"Failed to log alert: {e}")
+
         return True
 
     def start(self):
@@ -37,14 +49,14 @@ class HITLInterface:
 
     def review_code_changes(self):
         """Review code changes"""
-        cca = ConsolidatedCodeAnalysis()
-        # Add code review logic here
-        return True
-
-def review_code_changes():
-    """Standalone function for code review"""
-    cca = ConsolidatedCodeAnalysis()
-    # Your existing review code logic here
+        try:
+            analyzer = ConsolidatedCodeAnalysis()
+            report = analyzer.generate_aggregated_report()
+            logger.info(f"Code review completed with {len(report.get('diff_report', {}))} differences found")
+            return True
+        except Exception as e:
+            logger.error(f"Error during code review: {e}")
+            return False
 
 def hitl_command_loop(task_manager):
     """Command loop for HITL interface"""

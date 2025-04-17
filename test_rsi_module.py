@@ -2,7 +2,8 @@ import unittest
 import os
 import json
 import time
-from rsi_module import RSIModule, CircuitState
+from rsi_module import RSIModule
+from resilience.circuit_breaker import CircuitState
 
 
 class TestRSIModule(unittest.TestCase):
@@ -57,19 +58,19 @@ class TestRSIModule(unittest.TestCase):
         # Force failures to open circuit
         for _ in range(6):
             self.rsi.execute_task("failing_task")
-        
+
         # Verify circuit is open
         self.assertEqual(
             self.rsi.resilience.circuit_breakers["sandbox"].state,
             CircuitState.OPEN
         )
-        
+
         # Wait for recovery timeout
         time.sleep(1)  # Shortened for testing
-        
+
         # Attempt recovery
-        result = self.rsi.execute_task("healthy_task")
-        
+        self.rsi.execute_task("healthy_task")
+
         # Verify circuit closed after successful execution
         self.assertEqual(
             self.rsi.resilience.circuit_breakers["sandbox"].state,
@@ -80,11 +81,11 @@ class TestRSIModule(unittest.TestCase):
         """Test system continues in degraded mode"""
         # Force system into degraded mode
         self.rsi.memory_manager = None
-        
+
         # Execute directive
-        directive = {"id": "test", "priority": "High", "code": "print('test')"}
-        result = self.rsi.execute_directive()
-        
+        test_directive = {"id": "test", "priority": "High", "code": "print('test')"}
+        self.rsi.execute_directive(test_directive)
+
         # Verify degraded execution
         self.assertTrue(self.rsi.degraded_mode)
         self.assertGreater(

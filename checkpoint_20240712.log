@@ -1,0 +1,36 @@
+Guardian_AI Codebase Checkpoint - 2024-07-12
+===========================================
+
+This file serves as a checkpoint before comprehensive analysis and potential modifications.
+If rollback is needed, refer to this file for the state of critical files.
+
+Critical Files:
+- perpetual_llm.py
+- rsi_module.py
+- sandbox_executor.py
+- hitl_interface.py
+- ollama_agent.py
+- memory_manager.py
+- self_diagnostic.py
+
+Additional directories to analyze:
+- __pycache__ (23 files)
+- archive (1 file)
+- backups (1 file)
+- baseline (1 file)
+- config (2 files)
+- core (1 file)
+- data (1 file)
+- docs (3 files)
+- memory (1 file)
+- monitoring (2 files)
+- recovery (1 file)
+- resilience (1 file)
+- staging (1 file)
+- tests (5 files)
+- tests/__pycache__ (10 files)
+- tests_optional (6 files)
+- tools (3 files)
+- validation (1 file)
+
+Total files: 101 (37 in root, 64 in subdirectories)

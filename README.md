@@ -43,25 +43,29 @@ python tools/system_validator.py
 
 6. Launch the agent:
 ```bash
-python perpetual_agent.py
+python perpetual_llm.py
 ```
 
 ## Core Components
 
-- `perpetual_agent.py`: Primary driver of the agent framework
+- `perpetual_llm.py`: Primary driver of the agent framework
 - `rsi_module.py`: Handles recursive self-improvement
 - `hitl_interface.py`: Human oversight interface
-- `sandbox_executor.py`: Secure code execution
-- `memory_manager.py`: Persistent state management
+- `sandbox_executor.py`: Secure code execution with Docker isolation
+- `memory_manager.py`: Persistent state management with file monitoring and versioning
 - `system_task_manager.py`: Task scheduling and management
+- `resilience/circuit_breaker.py`: Circuit breaker implementation for resilience
 
 ## Security Features
 
 - Air-gapped execution environment
-- Sandboxed code execution
+- Sandboxed code execution with Docker isolation
+- Alternative code interpreter for lightweight execution
 - HITL validation for critical changes
 - Comprehensive logging and diagnostics
-- Circuit breaker protection
+- Circuit breaker protection for resilience
+- File integrity monitoring and versioning
+- Variant simulation for security testing
 
 ## Configuration
 

@@ -27,4 +27,4 @@ RUN useradd -m rsi_user && \
 USER rsi_user
 
 # Entrypoint
-CMD ["python", "perpetual_agent.py"]
+CMD ["python", "perpetual_llm.py"]

@@ -18,3 +18,11 @@
 [2025-03-14 00:56:12,250] INFO: HITL Interface initialized
 [2025-03-14 00:56:12,250] INFO: Configuration loaded/reloaded successfully.
 [2025-03-14 00:56:12,250] INFO: Initialized Ollama agent with model: llama2
+[2025-04-17 09:48:16,927] INFO: Manifest loaded successfully.
+[2025-04-17 09:48:16,927] ERROR: Error computing checksum for baseline/module1.py: [Errno 2] No such file or directory: 'baseline/module1.py'
+[2025-04-17 09:48:16,928] ERROR: Error computing checksum for baseline/module2.py: [Errno 2] No such file or directory: 'baseline/module2.py'
+[2025-04-17 09:48:16,928] INFO: Manifest saved successfully.
+[2025-04-17 09:51:28,363] INFO: Manifest loaded successfully.
+[2025-04-17 09:51:28,363] INFO: Manifest saved successfully.
+[2025-04-17 09:52:33,831] INFO: Manifest loaded successfully.
+[2025-04-17 09:52:33,831] INFO: Manifest saved successfully.

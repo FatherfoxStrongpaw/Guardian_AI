@@ -1,13 +1,14 @@
 {
     "critical_files": {
         "sandbox_excecuter.py": null,
-        "rsi_module.py": "0ed82be306e72082a329a524b23fb76a065b3f14ec9ba46c5035e842e2a9f0a1",
-        "perpetual_agent.py": null,
-        "hitl_interface.py": "39966da9e811daae8797fa0b7a2ce4faea1903bf68a1b2bc25fde815610757cc",
-        "ollama_agent.py": "6a1be9fd58d5a4bf01ccc9a8a65bb43944682d7c3bc2742dbd07322c80611b36",
-        "self_diagnostic.py": "45b0d830e3a09277f2a4bb328bfa02acfc36545ac3c7a6e19b90d6874ae27a15"
+        "rsi_module.py": "6c6ed7d9ced5b5fb5a808983720d93e541bf4b9b92390965d6102583caa95e73",
+        "perpetual_llm.py": "91eab4f2592c634dd6daaf71036117174c696a116b75facb41bd8824bd420e95",
+        "hitl_interface.py": "8e5f37cc4c631fab94f5ad26f2c909e855a9d4b2911f54f5b8e2a42a55e02da8",
+        "ollama_agent.py": "465618bc38a2d866114fc04b59bbdb69db91bb81b2d200004367dcffcb3864d0",
+        "self_diagnostic.py": "7ab84aa60b3f09e839d69901726d87e28877d0df33ef6d5ea99f6f311f4ee1a3",
+        "sandbox_executor.py": "8c0018437f8d84087817c51d8644bcbe1ff0fb0615d1bd779e32218b05832284"
     },
-    "last_check": 1741878052.94043,
+    "last_check": 1744908753.8318417,
     "check_interval": 3600,
     "alert_threshold": 3
 }

@@ -1,7 +1,5 @@
 import unittest
 import importlib
-import sys
-import os
 
 class TestDependencies(unittest.TestCase):
     def setUp(self):
@@ -14,11 +12,12 @@ class TestDependencies(unittest.TestCase):
                 'time',
                 'random'
             ],
-            'perpetual_agent': [
+            'perpetual_llm': [
                 'logging',
                 'time',
                 'threading',
-                'memory_manager'
+                'memory_manager',
+                'resilience.circuit_breaker'
             ],
             'hitl_interface': [
                 'consolidated_code_analysis',
@@ -34,47 +33,43 @@ class TestDependencies(unittest.TestCase):
                 'ast',
                 'logging',
                 'multiprocessing'
+            ],
+            'resilience.circuit_breaker': [
+                'logging',
+                'time',
+                'enum'
             ]
         }
 
     def test_module_imports(self):
         """Verify all critical module dependencies can be imported"""
         failed_imports = []
-        
+
         for module, dependencies in self.critical_modules.items():
             for dep in dependencies:
                 try:
                     importlib.import_module(dep)
                 except ImportError as e:
                     failed_imports.append(f"{module} -> {dep}: {str(e)}")
-        
+
         if failed_imports:
             self.fail(f"Missing dependencies:\n" + "\n".join(failed_imports))
 
-    def get_imports(module):
-        if hasattr(module, '__name__'):
-            return [module.__name__]
-        return []
-
     def test_circular_dependencies(self):
         """Check for circular dependencies between modules"""
-        visited = set()
-        stack = ['rsi_module']  # Start with main module
-        
-        while stack:
-            current = stack.pop()
-            if current not in visited:
-                visited.add(current)
-                try:
-                    module = importlib.import_module(current)
-                    stack.extend(get_imports(module))
-                except ImportError:
-                    continue
+        # This test is redundant with test_circular_deps.py
+        # Just verify that the main modules can be imported without circular dependency errors
+        for module_name in self.critical_modules.keys():
+            try:
+                importlib.import_module(module_name.replace('resilience.', ''))
+            except ImportError as e:
+                if 'circular import' in str(e).lower():
+                    self.fail(f"Circular import detected in {module_name}: {e}")
 
     def test_config_references(self):
         """Verify config keys referenced in code exist in base_config.yaml"""
         import yaml
-        
+
         with open('config/base_config.yaml', 'r') as f:
             config = yaml.safe_load(f)
 
@@ -85,7 +80,10 @@ class TestDependencies(unittest.TestCase):
             'system.log_level',
             'security.sandbox.enabled',
             'llm.provider',
-            'memory.type'
+            'memory.type',
+            'resilience.circuit_breaker.enabled',
+            'resilience.circuit_breaker.failure_threshold',
+            'resilience.circuit_breaker.recovery_timeout'
         }
 
         for key in required_keys:

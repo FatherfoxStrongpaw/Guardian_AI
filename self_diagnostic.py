@@ -75,8 +75,10 @@ def initialize_manifest():
             "critical_files": {
                 "sandbox_excecuter.py": None,
                 "rsi_module.py": None,
-                "perpetual_agent.py": None,
-                "hitl_interface.py": None
+                "perpetual_llm.py": None,
+                "hitl_interface.py": None,
+                "ollama_agent.py": None,
+                "sandbox_executor.py": None
             },
             "last_check": None,
             "check_interval": 3600,
@@ -96,35 +98,35 @@ def run_self_diagnostics(critical_files):
         "results": {},
         "alerts": []
     }
-    
+
     for file_path in critical_files:
         try:
             current_checksum = compute_file_checksum(file_path)
             expected_checksum = manifest["critical_files"].get(file_path)
-            
+
             result = {
                 "expected": expected_checksum,
                 "current": current_checksum,
                 "match": expected_checksum == current_checksum if expected_checksum else None,
                 "status": "ok"
             }
-            
+
             if result["match"] is False:
                 result["status"] = "modified"
                 report["alerts"].append(f"File modified: {file_path}")
             elif result["match"] is None:
                 result["status"] = "new"
                 manifest["critical_files"][file_path] = current_checksum
-                
+
             report["results"][file_path] = result
-            
+
         except FileNotFoundError:
             report["results"][file_path] = {
                 "status": "missing",
                 "error": f"File not found: {file_path}"
             }
             report["alerts"].append(f"Critical file missing: {file_path}")
-            
+
         except Exception as e:
             report["results"][file_path] = {
                 "status": "error",
@@ -134,7 +136,7 @@ def run_self_diagnostics(critical_files):
 
     manifest["last_check"] = report["timestamp"]
     save_manifest(manifest)
-    
+
     return report
 
 
@@ -160,7 +162,14 @@ def print_diagnostic_report(report):
 
 # Example usage for testing.
 if __name__ == "__main__":
-    # List of critical files to monitor. Adjust these paths as needed.
-    critical_files = ["baseline/module1.py", "baseline/module2.py", "config.json"]
+    # List of critical files to monitor.
+    critical_files = [
+        "perpetual_llm.py",
+        "rsi_module.py",
+        "sandbox_executor.py",
+        "hitl_interface.py",
+        "ollama_agent.py",
+        "self_diagnostic.py"
+    ]
     report = run_self_diagnostics(critical_files)
     print_diagnostic_report(report)
